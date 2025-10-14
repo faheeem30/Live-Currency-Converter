@@ -1,9 +1,9 @@
-💱 Live Currency Converter (Streamlit + API + SQLite)
+## 💱 Live Currency Converter (Streamlit + API + SQLite)
 
 A real-time currency conversion web app built with Python, Streamlit, and Frankfurter Exchange Rate API.
 It converts between 30+ global currencies, stores history in a local database, and visualizes historical trends using interactive charts.
 
-🔹 Features
+## 🔹 Features
 
 🌍 Real-Time Conversion: Fetches live exchange rates using the Frankfurter REST API.
 
@@ -17,7 +17,7 @@ It converts between 30+ global currencies, stores history in a local database, a
 
 🗃️ Offline Storage: Uses SQLite for persistent local storage of recent conversions.
 
-🔹 Tech Stack
+## 🔹 Tech Stack
 
 Frontend: Streamlit
 
@@ -29,7 +29,7 @@ API: Frankfurter Exchange Rate API
 
 Visualization: Plotly
 
-🔹 Future Enhancements
+## 🔹 Future Enhancements
 
 Export conversion history as CSV
 
@@ -40,6 +40,8 @@ Add currency converter for crypto assets
 <img width="1902" height="972" alt="image" src="https://github.com/user-attachments/assets/60bff77e-6818-4c83-af26-988a6903d90d" />
 <img width="906" height="771" alt="image" src="https://github.com/user-attachments/assets/7736fa0b-3757-4361-b466-39eb0c51e6bc" />
 
+
+## For app.py file (this has a frontend file)
 STEPS
 1.Install dependencies
 
@@ -57,4 +59,23 @@ API_KEY = "key from the website "
 https://www.exchangerate-api.com/ 
 Go this website get the keys and paste the in this "key from the website " path 
 
-(there will be two files currency_converter.py and app.py , use app.py for the streamlit frontened . basic use currency_converter.py)
+## For Currency_converter.py file 
+STEPS
+1.Install dependencies
+
+pip install requests
+
+
+2.Run the app
+
+python currency_converter.py
+
+3.3.Key stepup
+API_KEY = "key from the website "
+        url = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{base_currency.upper()}"
+
+https://www.exchangerate-api.com/ 
+Go this website get the keys and paste the in this "key from the website " path  
+Output:<img width="1200" height="146" alt="image" src="https://github.com/user-attachments/assets/8128d135-41f9-430c-82de-5d510f02da44" />
+
+(there will be two files currency_converter.py and app.py , use app.py for the streamlit frontened ,basic use currency_converter.py)
