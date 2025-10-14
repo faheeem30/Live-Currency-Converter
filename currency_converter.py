@@ -3,7 +3,7 @@ import requests
 def get_exchange_rate(base_currency, target_currency):
     try:
         # You can get a free API key from https://www.exchangerate-api.com/
-        API_KEY = "8b4169f1f9635d3b40050a4e"
+        API_KEY = "# get the key "
         url = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{base_currency.upper()}"
         
         response = requests.get(url)
@@ -42,3 +42,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
