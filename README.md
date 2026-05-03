@@ -3,6 +3,8 @@
 A real-time currency conversion web app built with Python, Streamlit, and Frankfurter Exchange Rate API.
 It converts between 30+ global currencies, stores history in a local database, and visualizes historical trends using interactive charts.
 
+UI LINK :https://live-currency-converter-al6nxc5pfhrun5tzscdjxv.streamlit.app/
+
 ## 🔹 Features
 
 🌍 Real-Time Conversion: Fetches live exchange rates using the Frankfurter REST API.
