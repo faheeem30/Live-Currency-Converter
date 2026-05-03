@@ -86,19 +86,10 @@ if st.button("Convert 💰"):
         st.error(f"⚠️ Error: {e}")
 
 # ---- HISTORY DROPDOWN ----
-st.subheader("📜 Last 10 Conversions")
-cur.execute("SELECT base, target, amount, converted, rate, date FROM history ORDER BY id DESC")
-rows = cur.fetchall()
+st.subheader("📜 Recent Conversions")
 
-if rows:
-    options = [
-        f"{r[0]} → {r[1]} | {r[2]} {r[0]} = {r[3]:.2f} {r[1]} (Rate: {r[4]:.4f}, Date: {r[5]})"
-        for r in rows
-    ]
-    choice = st.selectbox("Select a past conversion:", options)
-else:
-    st.info("No conversion history yet.")
-
+for r in rows[:5]:
+    st.write(f"{r[2]} {r[0]} → {r[3]:.2f} {r[1]}")
 # ---- HISTORICAL TREND ----
 st.subheader("📊 Historical Trend (Interactive Plotly)")
 
