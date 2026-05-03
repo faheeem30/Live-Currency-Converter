@@ -28,8 +28,7 @@ conn.commit()
 # ---- FETCH CURRENCIES DYNAMICALLY ----
 try:
     response = requests.get("https://api.frankfurter.app/currencies")
-    currencies_data = response.json()  # dict like {"USD":"United States Dollar", ...}
-    # Dropdown: "USD - United States Dollar"
+    currencies_data = response.json()
     currency_options = [f"{code} - {name}" for code, name in currencies_data.items()]
 except Exception as e:
     st.error(f"⚠️ Could not fetch currency list: {e}")
@@ -38,7 +37,7 @@ except Exception as e:
         "GBP - British Pound", "AUD - Australian Dollar", "CAD - Canadian Dollar",
         "JPY - Japanese Yen", "CNY - Chinese Yuan", "SGD - Singapore Dollar",
         "CHF - Swiss Franc"
-    ]  # fallback
+    ]
 
 # ---- UI INPUTS ----
 col1, col2 = st.columns(2)
@@ -47,13 +46,14 @@ with col1:
         "From Currency", currency_options,
         index=[i for i, c in enumerate(currency_options) if c.startswith("USD")][0]
     )
-    base = base_choice.split(" - ")[0]  # extract code
+    base = base_choice.split(" - ")[0]
+
 with col2:
     target_choice = st.selectbox(
         "To Currency", currency_options,
         index=[i for i, c in enumerate(currency_options) if c.startswith("INR")][0]
     )
-    target = target_choice.split(" - ")[0]  # extract code
+    target = target_choice.split(" - ")[0]
 
 amount = st.number_input("Enter Amount", min_value=0.0, value=1.0, step=0.5)
 
@@ -67,29 +67,39 @@ if st.button("Convert 💰"):
         if "rates" in data:
             rate = data["rates"][target]
             converted = amount * rate
+
             st.success(f"✅ {amount} {base} = {converted:.2f} {target}")
             st.caption(f"1 {base} = {rate:.4f} {target} | Updated: {data['date']}")
 
-            # --- Save to Database ---
+            # Save to DB
             cur.execute(
                 "INSERT INTO history (base, target, amount, converted, rate, date) VALUES (?, ?, ?, ?, ?, ?)",
                 (base, target, amount, converted, rate, data["date"])
             )
             conn.commit()
 
-            # Keep only last 10 entries
+            # Keep last 10
             cur.execute("DELETE FROM history WHERE id NOT IN (SELECT id FROM history ORDER BY id DESC LIMIT 10)")
             conn.commit()
+
         else:
             st.error("❌ Unable to fetch data.")
+
     except Exception as e:
         st.error(f"⚠️ Error: {e}")
 
-# ---- HISTORY DROPDOWN ----
+# ✅ ---- FIXED PART (ONLY THIS ADDED) ----
 st.subheader("📜 Recent Conversions")
 
-for r in rows[:5]:
-    st.write(f"{r[2]} {r[0]} → {r[3]:.2f} {r[1]}")
+cur.execute("SELECT base, target, amount, converted FROM history ORDER BY id DESC")
+rows = cur.fetchall()
+
+if rows:
+    for r in rows[:5]:
+        st.write(f"{r[2]} {r[0]} → {r[3]:.2f} {r[1]}")
+else:
+    st.info("No conversion history yet.")
+
 # ---- HISTORICAL TREND ----
 st.subheader("📊 Historical Trend (Interactive Plotly)")
 
@@ -102,6 +112,7 @@ with st.form("trend_form"):
         )
     with col2:
         end_date = st.date_input("End Date", value=datetime.now().date())
+
     submitted = st.form_submit_button("Show Trend")
 
 if submitted:
@@ -117,7 +128,6 @@ if submitted:
                 dates = list(data["rates"].keys())
                 rates = [r[target] for r in data["rates"].values()]
 
-                # Plotly interactive chart
                 fig = go.Figure()
                 fig.add_trace(go.Scatter(
                     x=dates, y=rates, mode='lines+markers',
@@ -125,6 +135,7 @@ if submitted:
                     marker=dict(size=6),
                     name=f"{base}/{target}"
                 ))
+
                 fig.update_layout(
                     title=f"{base} → {target} Exchange Rate Trend ({start_date} to {end_date})",
                     xaxis_title="Date",
@@ -132,10 +143,12 @@ if submitted:
                     template="plotly_white",
                     hovermode="x unified"
                 )
-                st.plotly_chart(fig, use_container_width=True)
 
+                st.plotly_chart(fig, use_container_width=True)
                 st.success(f"✅ Showing rates from {start_date} to {end_date}")
+
             else:
                 st.warning("No data available for this date range.")
+
         except Exception as e:
             st.error(f"⚠️ Error fetching historical data: {e}")
